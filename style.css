@@ -1,0 +1,370 @@
+/* 基本スタイル */
+body {
+    font-family: 'Meiryo', 'メイリオ', 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #444;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* フォーム要素 */
+fieldset {
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+legend {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #007bff;
+    padding: 0 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* paddingを含めてwidthを100%にする */
+}
+
+.common-items-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+/* テーブル */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    table-layout: fixed;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+thead {
+    background-color: #f0f8ff;
+}
+
+th {
+    font-weight: bold;
+}
+
+/* テーブル内の入力フォーム */
+table input[type="number"],
+table input[type="text"],
+table select {
+    width: 95%;
+}
+
+/* 各列の幅調整 */
+.col-check { width: 5%; text-align: center; }
+td:nth-child(3), td:nth-child(4) { text-align: center; } /* 単位, 単価 */
+td:nth-child(5), td:nth-child(6) { text-align: right; } /* 数量, 合計 */
+
+/* 合計テーブルのスタイル */
+#summary-table td:first-child {
+    font-weight: bold;
+    background-color: #f9f9f9;
+    width: 70%;
+}
+#summary-table td:last-child {
+    text-align: right;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+.subtotal-row td {
+    border-top: 2px solid #ccc;
+}
+.grand-total-row td {
+    background-color: #007bff;
+    color: white;
+    font-size: 1.3em !important;
+    border-top: 3px double #333;
+}
+
+/* ボタン */
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#add-material-row-btn {
+    background-color: #28a745;
+    color: white;
+    margin-top: 10px;
+}
+#add-material-row-btn:hover {
+    background-color: #218838;
+}
+
+.delete-row-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+}
+
+.actions {
+    text-align: center;
+    margin-top: 20px;
+}
+input.editable-price {
+    width: 90%;
+    text-align: right;
+    border: 1px dashed #ccc;
+    background-color: #f9f9f9;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+input.editable-price:focus {
+    background-color: #fff;
+    border: 1px solid #007bff;
+    outline: none;
+}
+
+.add-row-btn {
+    background-color: #17a2b8;
+    color: white;
+    margin-top: 10px;
+}
+.add-row-btn:hover {
+    background-color: #138496;
+}
+#add-material-row-btn {
+    background-color: #28a745;
+}
+#add-material-row-btn:hover {
+    background-color: #218838;
+}
+
+#summary-table .rate-input {
+    display: inline-block;
+    width: 70px; /* 幅を小さく設定 */
+    text-align: right;
+    border: 1px dashed #ccc;
+    padding: 2px 5px;
+    vertical-align: middle;
+}
+
+/* --- 列幅の調整 --- */
+/* 工事項目テーブル */
+#work-items-table th:nth-child(1), #work-items-table td:nth-child(1) { width: 25%; } /* 項目 */
+#work-items-table th:nth-child(2), #work-items-table td:nth-child(2) { width: 23%; } /* 仕様 */
+#work-items-table th:nth-child(3), #work-items-table td:nth-child(3) { width: 8%; }  /* 単位 */
+#work-items-table th:nth-child(4), #work-items-table td:nth-child(4) { width: 10%; } /* 単価 */
+#work-items-table th:nth-child(5), #work-items-table td:nth-child(5) { width: 8%; }  /* 数量 */
+#work-items-table th:nth-child(6), #work-items-table td:nth-child(6) { width: 12%; } /* 合計 */
+#work-items-table th:nth-child(7), #work-items-table td:nth-child(7) { width: 12%; } /* 廃棄単価 */
+/* 部材テーブルの列幅を調整 */
+#material-items-table th:nth-child(1) { width: 20%; } /* 名称 */
+#material-items-table th:nth-child(2) { width: 20%; } /* 仕様/型式 */
+#material-items-table th:nth-child(3) { width: 7%; }  /* 数量 */
+#material-items-table th:nth-child(4) { width: 7%; }  /* 単位 */
+#material-items-table th:nth-child(5) { width: 11%; } /* 単価 */
+#material-items-table th:nth-child(6) { width: 11%; } /* ★仕入単価 */
+#material-items-table th:nth-child(7) { width: 12%; } /* 合計 */
+#material-items-table th:nth-child(8) { width: 12%; } /* 定価 */
+/* 経費項目テーブル */
+#expense-items-table th:nth-child(1), #expense-items-table td:nth-child(1) { width: 5%; }  /* 選択 */
+#expense-items-table th:nth-child(2), #expense-items-table td:nth-child(2) { width: 30%; } /* 項目 */
+#expense-items-table th:nth-child(3), #expense-items-table td:nth-child(3) { width: 26%; } /* 仕様 */
+#expense-items-table th:nth-child(4), #expense-items-table td:nth-child(4) { width: 8%; }  /* 単位 */
+#expense-items-table th:nth-child(5), #expense-items-table td:nth-child(5) { width: 12%; } /* 単価 */
+#expense-items-table th:nth-child(6), #expense-items-table td:nth-child(6) { width: 8%; }  /* 数量 */
+#expense-items-table th:nth-child(7), #expense-items-table td:nth-child(7) { width: 11%; } /* 合計 */
+
+/* --- 編集不可の入力欄のスタイル --- */
+input[readonly] {
+  background-color: #f2f2f2; /* 背景を薄いグレーに */
+  border-style: solid;
+  border-color: #e0e0e0;
+  cursor: not-allowed; /* 禁止カーソルを表示 */
+  color: #555;
+}
+/* ★変更: ボタンのスタイル */
+.actions {
+    /* 画面左上に固定するための設定 */
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000; /* 他の要素より手前に表示 */
+    text-align: left; /* 元々centerだったので変更 */
+}
+#export-excel-btn {
+    background-color: #007bff;
+    color: white;
+    font-size: 1.1em; /* 少し小さく調整 */
+    padding: 10px 25px; /* 少し小さく調整 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 影をつけて見やすく */
+}
+#export-excel-btn:hover {
+    background-color: #0056b3;
+}
+#export-excel-btn:disabled {
+    background-color: #6c757d;
+    cursor: wait;
+}
+/* グリッド内の工事日選択 */
+.work-day-options-grid {
+  display: flex;
+  align-items: center; /* 上下中央揃え */
+  height: 100%;
+}
+.work-day-options-grid > label { /* 「工事日選択」のテキストラベル */
+  font-weight: bold;
+  margin-right: 10px; /* ラベルとチェックボックスの間の隙間 */
+  white-space: nowrap; /* ラベルが改行しないように */
+}
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 各チェックボックスの間の隙間 */
+}
+.checkbox-group div {
+  display: flex;
+  align-items: center;
+}
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 4px; /* チェックボックスと文字の間の隙間 */
+}
+.checkbox-group label {
+  font-weight: normal;
+  margin-bottom: 0;
+}
+/* ログアウトボタンのスタイル */
+.logout-section {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+#logout-btn {
+  background-color: #6c757d; /* 落ち着いたグレー */
+  color: white;
+  padding: 10px 30px;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+#logout-btn:hover {
+  background-color: #5a6268;
+}
+
+.grid-span-2 {
+  /* 親のグリッドレイアウトの2列分を占める */
+  grid-column: 1 / -1;
+}
+
+.multi-input-row {
+  display: flex; /* 子要素を横並びにする */
+  align-items: flex-end; /* ラベルの高さが違っても入力欄の底を揃える */
+  gap: 15px; /* 各要素の間に隙間を設ける */
+}
+
+.multi-input-row .input-full {
+  flex: 2; /* 他の要素の2倍の幅を取る (50%) */
+}
+
+.multi-input-row .input-half {
+  flex: 1; /* 利用可能なスペースを均等に分ける (各25%) */
+}
+.summary-container {
+  display: flex;
+  gap: 20px; /* 左右のボックスの間の隙間 */
+}
+.summary-box:first-child { /* 左側のボックス (仕入) */
+  flex: 2; /* 幅の比率を 2 (約40%) に設定 */
+}
+.summary-box:last-child { /* 右側のボックス (見積) */
+  flex: 3; /* 幅の比率を 3 (約60%) に設定 */
+}
+#purchase-summary-table td:last-child {
+  text-align: right;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+#purchase-summary-table .profit-row td {
+  background-color: #e6f7ff;
+  color: #0056b3;
+  font-size: 1.2em !important;
+}
+.editable-total-cell {
+  padding: 2px !important; /* 内側の余白を小さく */
+}
+.editable-total-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px dashed #007bff; /* 編集可能であることがわかるように点線で囲む */
+  background-color: #f0f8ff;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-align: right;
+  box-sizing: border-box; /* paddingを含めてwidthを100%にする */
+  font-family: inherit; /* 親要素のフォントを継承 */
+}
+.editable-total-input:focus {
+  background-color: #fff;
+  outline: 2px solid #007bff;
+}
+【style.css の一番下に追加】
+css
+
+
+/* ★ここから追加: 特別オプションのスタイル */
+.special-option {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #fffbe6; /* 薄い黄色 */
+  border: 1px solid #ffe58f;   /* 黄色い枠線 */
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+.special-option input[type="checkbox"] {
+  width: auto; /* width:100%を解除 */
+  margin-right: 10px;
+  transform: scale(1.2); /* チェックボックスを少し大きく */
+}
+.special-option label {
+  font-weight: bold;
+  color: #d97706; /* 少し濃いオレンジ色 */
+  margin-bottom: 0;
+}

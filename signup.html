@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ★タイトルを変更 -->
+<title>新規登録 - サクッとミツモリ</title>
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+/* CSSは変更なし */
+body { font-family: sans-serif; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+.signup-container { background-color: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
+.signup-logo { width: 80px; margin-bottom: 20px; }
+h1 { margin-bottom: 30px; color: #333; }
+input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+button { width: 100%; padding: 12px; background-color: #4a7c59; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background-color 0.2s; }
+button:hover { background-color: #3b6347; }
+button:disabled { background-color: #9dbca7; cursor: not-allowed; }
+#error-message { color: red; margin-top: 15px; height: 1em; font-size: 14px; }
+.login-link { margin-top: 20px; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="signup-container">
+<img src="logo.png" alt="ロゴ" class="signup-logo">
+<h1>アカウント新規登録</h1>
+<form id="signup-form">
+<input type="email" id="email" placeholder="会社のメールアドレス" required>
+<input type="password" id="password" placeholder="パスワード (6文字以上)" required>
+<button type="submit">登録して開始</button>
+</form>
+<p id="error-message"></p>
+<p class="login-link">
+<!-- ★リンク先を login.html に変更 -->
+すでにアカウントをお持ちですか？ <a href="login.html">ログインはこちら</a>
+</p>
+</div>
+
+<!-- ★JavaScript部分は変更なしです -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+const ALLOWED_DOMAINS = ["ebl-service.co.jp", "yazawa.co.jp"];
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB0fKHkhF9Bbb1EmIrNCcnBRX5LUuCAafQ",
+  authDomain: "sakupro-c57b4.firebaseapp.com",
+  projectId: "sakupro-c57b4",
+  storageBucket: "sakupro-c57b4.firebasestorage.app",
+  messagingSenderId: "193298223172",
+  appId: "1:193298223172:web:85963a63a13055b7adac11",
+  measurementId: "G-7S8LV0GW0E"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const signupForm = document.getElementById('signup-form');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const submitButton = signupForm.querySelector('button');
+const errorMessage = document.getElementById('error-message');
+
+signupForm.addEventListener('submit', (e) => {
+e.preventDefault();
+const email = emailInput.value.trim();
+const password = passwordInput.value;
+errorMessage.textContent = '';
+submitButton.disabled = true;
+submitButton.textContent = '登録処理中...';
+
+const userDomain = email.split('@')[1];
+if (!userDomain || !ALLOWED_DOMAINS.includes(userDomain)) {
+errorMessage.textContent = '許可されていないメールアドレスです。';
+submitButton.disabled = false;
+submitButton.textContent = '登録して開始';
+return;
+}
+
+createUserWithEmailAndPassword(auth, email, password)
+.then((userCredential) => {
+alert('アカウントの登録が完了しました。');
+window.location.href = 'index.html';
+})
+.catch((error) => {
+if (error.code === 'auth/email-already-in-use') {
+errorMessage.textContent = 'このメールアドレスは既に使用されています。';
+} else if (error.code === 'auth/weak-password') {
+errorMessage.textContent = 'パスワードは6文字以上で設定してください。';
+} else {
+errorMessage.textContent = '登録に失敗しました。時間をおいて再度お試しください。';
+}
+console.error("Signup Error:", error);
+})
+.finally(() => {
+if (!window.location.href.endsWith('index.html')) {
+submitButton.disabled = false;
+submitButton.textContent = '登録して開始';
+}
+});
+});
+</script>
+</body>
+</html>

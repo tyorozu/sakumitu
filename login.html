@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ログイン - サクッとミツモリ</title>
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+body { font-family: sans-serif; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+.login-container { background-color: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
+.login-logo { width: 80px; margin-bottom: 20px; }
+h1 { margin-bottom: 30px; color: #333; }
+input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+button { width: 100%; padding: 12px; background-color: #4a7c59; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background-color 0.2s; }
+button:hover { background-color: #3b6347; }
+button:disabled { background-color: #9dbca7; cursor: not-allowed; }
+#error-message { color: red; margin-top: 15px; height: 1em; font-size: 14px; }
+/* ★リンク間のスペースを調整 */
+.forgot-password-link { margin-top: 15px; font-size: 14px; }
+.signup-link { margin-top: 10px; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="login-container">
+<img src="logo.png" alt="ロゴ" class="login-logo">
+<h1>ログイン</h1>
+<form id="login-form">
+<input type="email" id="email" placeholder="メールアドレス" required>
+<input type="password" id="password" placeholder="パスワード" required>
+<button type="submit">ログイン</button>
+</form>
+<p id="error-message"></p>
+
+<!-- ★「パスワードを忘れた方はこちら」のリンクを追加 -->
+<p class="forgot-password-link">
+    <a href="#" id="forgot-password">パスワードを忘れた方はこちら</a>
+</p>
+
+<p class="signup-link">
+アカウントをお持ちでないですか？ <a href="signup.html">新規登録はこちら</a>
+</p>
+</div>
+
+<script type="module">
+// ★Firebaseの機能(sendPasswordResetEmail)をインポートします
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+// Firebase設定 (変更なし)
+const firebaseConfig = {
+  apiKey: "AIzaSyB0fKHkhF9Bbb1EmIrNCcnBRX5LUuCAafQ",
+  authDomain: "sakupro-c57b4.firebaseapp.com",
+  projectId: "sakupro-c57b4",
+  storageBucket: "sakupro-c57b4.firebasestorage.app",
+  messagingSenderId: "193298223172",
+  appId: "1:193298223172:web:85963a63a13055b7adac11",
+  measurementId: "G-7S8LV0GW0E"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const loginForm = document.getElementById('login-form');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const submitButton = loginForm.querySelector('button');
+const errorMessage = document.getElementById('error-message');
+// ★追加したリンクの要素を取得します
+const forgotPasswordLink = document.getElementById('forgot-password');
+
+// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+// ★ パスワードリセットの処理を追加
+// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+forgotPasswordLink.addEventListener('click', (e) => {
+    e.preventDefault(); // リンクのデフォルト動作をキャンセル
+    const email = prompt("パスワードを再設定したいメールアドレスを入力してください。");
+
+    if (email) { // メールアドレスが入力された場合のみ実行
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                // 送信成功
+                alert("パスワード再設定用のメールを送信しました。メールボックスをご確認ください。");
+                errorMessage.textContent = ''; // エラーメッセージをクリア
+            })
+            .catch((error) => {
+                // 送信失敗
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage.textContent = "そのメールアドレスは登録されていません。";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage.textContent = "無効なメールアドレスです。";
+                } else {
+                    errorMessage.textContent = "処理に失敗しました。時間をおいて再度お試しください。";
+                }
+                console.error("Password Reset Error:", error);
+            });
+    }
+});
+
+// ログイン処理 (変更なし)
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    errorMessage.textContent = '';
+    submitButton.disabled = true;
+    submitButton.textContent = 'ログイン中...';
+
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        localStorage.setItem('loginTimestamp', Date.now()); 
+        window.location.href = 'index.html';
+    })
+    .catch((error) => {
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email') {
+            errorMessage.textContent = 'メールアドレスまたはパスワードが間違っています。';
+        } else {
+            errorMessage.textContent = 'ログインに失敗しました。';
+        }
+        console.error("Login Error:", error);
+    })
+    .finally(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = 'ログイン';
+    });
+});
+</script>
+</body>
+</html>

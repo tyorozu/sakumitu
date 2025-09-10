@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>見積作成アプリ</title>
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- ★変更: Excel出力ボタンをコンテナの外に移動 -->
+<div class="actions">
+    <button type="button" id="export-excel-btn">Excel出力</button>
+</div>
+
+<div class="container">
+<h1>見積作成アプリ</h1>
+
+<!-- 共通項目 -->
+<fieldset>
+<legend>共通項目</legend>
+<div class="common-items-grid">
+    <div>
+        <label for="sales-office">営業所:</label>
+        <select id="sales-office"></select>
+    </div>
+    <div>
+        <label for="company-name">提出先企業名:</label>
+        <input type="text" id="company-name" placeholder="株式会社〇〇">
+    </div>
+
+    <!-- 2段目 左 -->
+    <div class="special-option">
+        <input type="checkbox" id="use-tokyo-address">
+        <label for="use-tokyo-address">首都圏営業所の住所で提出する (建設業認可対応)</label>
+    </div>
+    
+    <!-- 2段目 右 (ここに工事日選択を移動) -->
+    <div class="work-day-options-grid">
+        <label>工事日選択:</label>
+        <div class="checkbox-group">
+            <div>
+                <input type="checkbox" id="day-weekday" name="work-day" value="平日" checked>
+                <label for="day-weekday">平日</label>
+            </div>
+            <div>
+                <input type="checkbox" id="day-saturday" name="work-day" value="土">
+                <label for="day-saturday">土</label>
+            </div>
+            <div>
+                <input type="checkbox" id="day-sunday" name="work-day" value="日">
+                <label for="day-sunday">日</label>
+            </div>
+            <div>
+                <input type="checkbox" id="day-holiday" name="work-day" value="祝">
+                <label for="day-holiday">祝</label>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 3段目 左 -->
+    <div>
+        <label for="company-contact">企業担当者名:</label>
+        <input type="text" id="company-contact" placeholder="〇〇 様">
+    </div>
+    
+    <!-- 3段目 右 -->
+    <div>
+        <label for="project-name">見積の現場名:</label>
+        <input type="text" id="project-name" placeholder="〇〇ビル">
+    </div>
+
+    <!-- 4段目 (2列結合) -->
+    <div class="grid-span-2">
+        <div class="multi-input-row">
+            <div class="input-full">
+                <label for="project-content">見積の内容:</label>
+                <input type="text" id="project-content" placeholder="照明交換工事">
+            </div>
+            <div class="input-half">
+                <label for="assumed-manpower">想定人工(人):</label>
+                <input type="number" id="assumed-manpower" value="1" min="1" step="0.5">
+            </div>
+            <div class="input-half">
+                <label for="work-days">作業日数(日):</label>
+                <input type="number" id="work-days" value="0" min="0" readonly>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5段目 左 -->
+    <div>
+        <label for="my-name">自分の名前:</label>
+        <select id="my-name"></select>
+    </div>
+    
+    <!-- 5段目 右 -->
+    <div>
+        <label for="approver-name">検印者:</label>
+        <select id="approver-name"></select>
+    </div>
+</div>
+</fieldset>
+
+<!-- 見積工事項目 -->
+<fieldset>
+<legend>見積工事項目</legend>
+<table id="work-items-table">
+<thead>
+<tr>
+<th>項目</th>
+<th>仕様</th>
+<th>単位</th>
+<th>単価</th>
+<th>数量</th>
+<th>合計</th>
+<th>廃棄単価</th>
+</tr>
+</thead>
+<tbody>
+<!-- JSで動的に生成 -->
+</tbody>
+</table>
+<button type="button" id="add-work-row-btn" class="add-row-btn">工事項目を追加</button>
+</fieldset>
+
+<!-- 見積部材項目 -->
+<fieldset>
+<legend>見積部材項目</legend>
+<table id="material-items-table">
+<thead>
+<tr>
+<th>名称</th>
+<th>仕様 / 型式</th>
+<th>数量</th>
+<th>単位</th>
+<th>単価</th>
+<th>仕入単価</th>
+<th>合計</th>
+<th>定価</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<button type="button" id="add-material-row-btn" class="add-row-btn">部材項目を追加</button>
+</fieldset>
+
+<!-- 見積経費項目 -->
+<fieldset>
+<legend>見積経費項目</legend>
+<table id="expense-items-table">
+<thead>
+<tr>
+<th class="col-check">選択</th>
+<th>項目</th>
+<th>仕様</th>
+<th>単位</th>
+<th>単価</th>
+<th>数量</th>
+<th>合計</th>
+</tr>
+</thead>
+<tbody>
+<!-- JSで動的に生成 -->
+</tbody>
+</table>
+<button type="button" id="add-expense-row-btn" class="add-row-btn">経費項目を追加</button>
+</fieldset>
+
+<!-- 合計 & 見積共通項目 -->
+<fieldset>
+<legend>合計</legend>
+<div class="summary-container">
+    <!-- 左側: 仕入・粗利表示エリア -->
+    <div class="summary-box">
+        <table id="purchase-summary-table">
+            <tbody>
+                <tr><td>工事費 仕入合計</td><td id="total-work-purchase-cost">¥0</td></tr>
+                <tr><td>部材費 仕入合計</td><td id="total-material-purchase-cost">¥0</td></tr>
+                <tr><td>経費 仕入合計</td><td id="total-expense-purchase-cost">¥0</td></tr>
+                <tr><td>諸経費 (交通費)</td><td id="transport-purchase-cost">¥0</td></tr>
+                <tr class="subtotal-row">
+                    <td>合計仕入 (訂正可能)</td>
+                    <td class="editable-total-cell"> 
+                        <input type="number" id="total-purchase-cost-input" class="editable-total-input">
+                    </td>
+                </tr>
+                <tr class="profit-row"><td>粗利金額</td><td id="gross-profit-amount">¥0</td></tr>
+                <tr class="profit-row"><td>粗利率</td><td id="gross-profit-margin">0%</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 右側: 既存の見積合計エリア -->
+    <div class="summary-box">
+        <table id="summary-table">
+            <tbody>
+                <tr><td>工事費 合計</td><td id="total-work-cost">¥0</td></tr>
+                <tr><td>部材費 合計</td><td id="total-material-cost">¥0</td></tr>
+                <tr><td>経費 合計</td><td id="total-expense-cost">¥0</td></tr>
+                <tr class="subtotal-row"><td >小計 (工事費+部材費+経費)</td><td id="subtotal">¥0</td></tr>
+                <tr>
+                    <td>養生清掃費 (工事費の <input type="number" id="cleaning-rate" class="rate-input" value="5" min="0"> %)</td>
+                    <td id="cleaning-cost">¥0</td>
+                </tr>
+                <tr>
+                    <td>雑材消耗品費 (工事費の <input type="number" id="supplies-rate" class="rate-input" value="7" min="0"> %)</td>
+                    <td id="supplies-cost">¥0</td>
+                </tr>
+                <tr>
+                    <td>運搬交通費 (<input type="number" id="transport-unit-price" class="rate-input" value="8000" min="0"> 円/日)</td>
+                    <td id="transport-cost">¥0</td>
+                </tr>
+                <tr class="subtotal-row"><td>小計2</td><td id="subtotal2">¥0</td></tr>
+                <tr>
+                    <td>諸経費 (小計2の <input type="number" id="overhead-rate" class="rate-input" value="12" min="0"> %)</td>
+                    <td id="overhead-cost">¥0</td>
+                </tr>
+                <tr class="subtotal-row"><td>小計3</td><td id="subtotal3">¥0</td></tr>
+                <tr>
+                    <td>法定福利費 (小計3の <input type="number" id="welfare-rate" class="rate-input" value="8" min="0"> %)</td>
+                    <td id="welfare-cost">¥0</td>
+                </tr>
+                <tr class="grand-total-row"><td>御見積合計</td><td id="grand-total">¥0</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</fieldset>
+</div>
+<div class="logout-section">
+    <button id="logout-btn">ログアウト</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script type="module" src="script.js"></script>
+</body>
+</html>
